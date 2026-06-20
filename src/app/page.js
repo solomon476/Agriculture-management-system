@@ -88,7 +88,7 @@ export default function Home() {
 
       {/* Today's Tasks */}
       <div className="flex justify-between items-center mb-3">
-        <h3 className="font-bold">Today's Tasks</h3>
+        <h3 className="font-bold">Today&apos;s Tasks</h3>
         <Link href="/crops" className="text-primary text-sm font-medium">See all</Link>
       </div>
       <div className="flex flex-col gap-3 mb-6">

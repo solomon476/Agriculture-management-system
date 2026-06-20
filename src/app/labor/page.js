@@ -20,7 +20,7 @@ export default function Labor() {
         <div className="lg:col-span-2 flex flex-col gap-6">
           <div className="card p-0 overflow-hidden">
             <div className="p-4 border-b border-border bg-bg-surface-hover flex justify-between items-center">
-              <h3 className="font-bold">Today's Assignments</h3>
+              <h3 className="font-bold">Today&apos;s Assignments</h3>
               <span className="text-xs font-bold bg-primary text-white px-2 py-1 rounded-full">8 Active</span>
             </div>
             <div className="divide-y divide-border">
