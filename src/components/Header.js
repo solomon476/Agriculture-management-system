@@ -2,9 +2,7 @@ export default function Header() {
   return (
     <header className="header p-4 bg-primary text-white flex justify-between items-center shadow-md sticky top-0 z-50">
       <div className="flex items-center gap-2">
-        <div className="logo-icon bg-white text-primary rounded-full w-8 h-8 flex justify-center items-center font-bold text-lg">
-          A
-        </div>
+        <img src="/logo.png" alt="AgriBloom Logo" className="w-8 h-8 object-contain" />
         <h1 className="text-xl font-bold font-heading m-0 text-white">AgriBloom</h1>
       </div>
       <div className="flex items-center gap-4">

@@ -4,9 +4,7 @@ export default function Sidebar() {
   return (
     <aside className="desktop-sidebar hidden-mobile p-6 flex flex-col">
       <div className="flex items-center gap-3 mb-10">
-        <div className="logo-icon bg-primary text-white rounded-lg w-10 h-10 flex justify-center items-center font-bold text-xl shadow-md">
-          A
-        </div>
+        <img src="/logo.png" alt="AgriBloom Logo" className="w-10 h-10 object-contain" />
         <div>
           <h1 className="text-2xl font-bold font-heading text-primary m-0 leading-tight">AgriBloom</h1>
           <p className="text-xs text-muted font-medium">Farm Manager</p>
