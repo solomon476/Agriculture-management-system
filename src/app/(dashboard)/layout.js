@@ -5,7 +5,7 @@ import Navigation from "@/components/Navigation";
 import Sidebar from "@/components/Sidebar";
 
 export default async function DashboardLayout({ children }) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {

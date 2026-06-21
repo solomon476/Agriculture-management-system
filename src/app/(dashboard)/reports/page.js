@@ -3,7 +3,7 @@ import { createClient } from "@/utils/supabase/server";
 import DownloadPdfButton from "@/components/DownloadPdfButton";
 
 export default async function Reports() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
   const { data: farm } = await supabase

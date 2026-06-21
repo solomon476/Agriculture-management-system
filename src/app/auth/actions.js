@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 
 export async function login(formData) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const email = formData.get("email");
   const password = formData.get("password");
 
@@ -20,7 +20,7 @@ export async function login(formData) {
 }
 
 export async function register(formData) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const email = formData.get("email");
   const password = formData.get("password");
   const fullName = formData.get("full_name");
@@ -44,7 +44,7 @@ export async function register(formData) {
 }
 
 export async function logout() {
-  const supabase = createClient();
+  const supabase = await createClient();
   await supabase.auth.signOut();
   revalidatePath("/", "layout");
   redirect("/login");

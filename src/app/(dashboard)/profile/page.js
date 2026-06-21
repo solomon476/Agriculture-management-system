@@ -4,7 +4,7 @@ import LogoutButton from "@/components/LogoutButton";
 import Link from "next/link";
 
 export default async function Profile() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 

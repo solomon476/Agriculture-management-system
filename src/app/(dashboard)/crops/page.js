@@ -8,7 +8,7 @@ const statusColors = {
 };
 
 export default async function Crops() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
   const { data: farm } = await supabase

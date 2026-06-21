@@ -25,7 +25,7 @@ export default function QuickAdd() {
     setIsLoading(true);
     setError(null);
 
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) { router.push("/login"); return; }
 
