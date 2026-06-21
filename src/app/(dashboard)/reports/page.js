@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { createClient } from "@/utils/supabase/server";
+import DownloadPdfButton from "@/components/DownloadPdfButton";
 
 export default async function Reports() {
   const supabase = createClient();
@@ -36,13 +37,21 @@ export default async function Reports() {
           <h2 className="text-2xl font-bold font-heading">Financial Reports</h2>
           <p className="text-muted text-sm mt-1">Your real farm performance</p>
         </div>
-        <Link href="/add?type=expense" className="btn btn-primary flex items-center gap-2 text-sm px-3 py-2">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <line x1="12" y1="5" x2="12" y2="19"></line>
-            <line x1="5" y1="12" x2="19" y2="12"></line>
-          </svg>
-          Log Transaction
-        </Link>
+        <div className="flex gap-2">
+          <Link href="/add?type=expense" className="btn btn-secondary flex items-center gap-2 text-sm px-3 py-2">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            Log Transaction
+          </Link>
+          <DownloadPdfButton
+            transactions={transactions}
+            totalIncome={totalIncome}
+            totalExpenses={totalExpenses}
+            profit={profit}
+          />
+        </div>
       </div>
 
       {transactions.length === 0 ? (

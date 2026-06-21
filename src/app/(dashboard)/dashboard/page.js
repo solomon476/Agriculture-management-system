@@ -1,142 +1,132 @@
-export default function Dashboard() {
+import Link from "next/link";
+import { createClient } from "@/utils/supabase/server";
+import { redirect } from "next/navigation";
+
+export default async function DashboardDetail() {
+  const supabase = createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  const { data: farm } = await supabase
+    .from("farms")
+    .select("id, farm_name")
+    .eq("owner_id", user.id)
+    .single();
+
+  let totalIncome = 0, totalExpenses = 0, cropCount = 0;
+  let recentTransactions = [];
+
+  if (farm) {
+    const { data: txs } = await supabase
+      .from("transactions")
+      .select("*")
+      .eq("farm_id", farm.id)
+      .order("transaction_date", { ascending: false })
+      .limit(5);
+    recentTransactions = txs || [];
+    totalIncome = recentTransactions.filter(t => t.type === "Income").reduce((s, t) => s + Number(t.amount), 0);
+
+    const { data: allTxs } = await supabase.from("transactions").select("type, amount").eq("farm_id", farm.id);
+    if (allTxs) {
+      totalIncome = allTxs.filter(t => t.type === "Income").reduce((s, t) => s + Number(t.amount), 0);
+      totalExpenses = allTxs.filter(t => t.type === "Expense").reduce((s, t) => s + Number(t.amount), 0);
+    }
+
+    const { count } = await supabase.from("crops").select("id", { count: "exact", head: true }).eq("farm_id", farm.id);
+    cropCount = count || 0;
+  }
+
+  const profit = totalIncome - totalExpenses;
+
   return (
-    <div className="container py-8 animate-fade-in">
-      <div className="flex justify-between items-center mb-8">
+    <div className="container py-4 animate-fade-in">
+      <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-3xl font-bold font-heading">Farm Overview</h1>
-          <p className="text-muted mt-1">Real-time metrics for AgriBloom Farms</p>
+          <h2 className="text-2xl font-bold font-heading">Farm Analytics</h2>
+          <p className="text-muted text-sm mt-1">{farm?.farm_name || "My Farm"}</p>
         </div>
-        <div className="flex gap-3">
-          <button className="btn btn-secondary flex items-center gap-2">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-              <line x1="16" y1="2" x2="16" y2="6"></line>
-              <line x1="8" y1="2" x2="8" y2="6"></line>
-              <line x1="3" y1="10" x2="21" y2="10"></line>
-            </svg>
-            This Season
-          </button>
-          <button className="btn btn-primary flex items-center gap-2">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-              <polyline points="7 10 12 15 17 10"></polyline>
-              <line x1="12" y1="15" x2="12" y2="3"></line>
-            </svg>
-            Export Report
-          </button>
+        <Link href="/reports" className="btn btn-primary flex items-center gap-2 text-sm">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M3 3v18h18"></path><path d="m19 9-5 5-4-4-3 3"></path>
+          </svg>
+          Full Reports
+        </Link>
+      </div>
+
+      {/* Metrics */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div className="card border-l-4 border-l-success p-4">
+          <p className="text-muted text-xs font-bold uppercase tracking-wider mb-1">Total Income</p>
+          <h3 className="text-2xl font-bold text-success">KES {totalIncome.toLocaleString()}</h3>
+        </div>
+        <div className="card border-l-4 border-l-danger p-4">
+          <p className="text-muted text-xs font-bold uppercase tracking-wider mb-1">Total Expenses</p>
+          <h3 className="text-2xl font-bold text-danger">KES {totalExpenses.toLocaleString()}</h3>
+        </div>
+        <div className={`card border-l-4 p-4 ${profit >= 0 ? "border-l-primary" : "border-l-danger"}`}>
+          <p className="text-muted text-xs font-bold uppercase tracking-wider mb-1">Net Profit</p>
+          <h3 className={`text-2xl font-bold ${profit >= 0 ? "text-primary" : "text-danger"}`}>KES {profit.toLocaleString()}</h3>
+        </div>
+        <div className="card border-l-4 border-l-info p-4">
+          <p className="text-muted text-xs font-bold uppercase tracking-wider mb-1">Active Crops</p>
+          <h3 className="text-2xl font-bold">{cropCount}</h3>
         </div>
       </div>
 
-      {/* High-level Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <div className="card border-l-4 border-l-primary">
-          <p className="text-muted text-sm font-bold uppercase tracking-wider mb-2">Total Revenue</p>
-          <h2 className="text-3xl font-bold mb-2">KES 1.2M</h2>
-          <p className="text-sm text-success flex items-center gap-1 font-bold">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
-              <polyline points="17 6 23 6 23 12"></polyline>
-            </svg>
-            15% vs last season
-          </p>
-        </div>
-        
-        <div className="card border-l-4 border-l-danger">
-          <p className="text-muted text-sm font-bold uppercase tracking-wider mb-2">Total Expenses</p>
-          <h2 className="text-3xl font-bold mb-2">KES 450k</h2>
-          <p className="text-sm text-danger flex items-center gap-1 font-bold">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="23 18 13.5 8.5 8.5 13.5 1 6"></polyline>
-              <polyline points="17 18 23 18 23 12"></polyline>
-            </svg>
-            8% vs last season
-          </p>
-        </div>
-
-        <div className="card border-l-4 border-l-info">
-          <p className="text-muted text-sm font-bold uppercase tracking-wider mb-2">Active Crops</p>
-          <h2 className="text-3xl font-bold mb-2">45 Acres</h2>
-          <p className="text-sm text-muted font-medium">Across 8 plots</p>
-        </div>
-
-        <div className="card border-l-4 border-l-warning">
-          <p className="text-muted text-sm font-bold uppercase tracking-wider mb-2">Workforce</p>
-          <h2 className="text-3xl font-bold mb-2">24 Active</h2>
-          <p className="text-sm text-muted font-medium">12 Permanent, 12 Casual</p>
-        </div>
+      {/* Quick actions grid */}
+      <h3 className="font-bold mb-3">Farm Management</h3>
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+        {[
+          { href: "/add?type=crop", label: "Add New Crop", emoji: "🌱", desc: "Record a new crop" },
+          { href: "/add?type=expense", label: "Log Expense", emoji: "💸", desc: "Record an expense" },
+          { href: "/add?type=income", label: "Log Income", emoji: "💰", desc: "Record a sale" },
+          { href: "/add?type=inventory", label: "Add Inventory", emoji: "📦", desc: "Track supplies" },
+          { href: "/add?type=labor", label: "Log Labor", emoji: "👷", desc: "Record a payment" },
+          { href: "/reports", label: "View Reports", emoji: "📊", desc: "See full analytics" },
+        ].map((item) => (
+          <Link key={item.href} href={item.href} className="card flex items-center gap-3 p-4 hover:border-primary hover:shadow-md transition-all">
+            <span className="text-2xl">{item.emoji}</span>
+            <div>
+              <p className="font-bold text-sm">{item.label}</p>
+              <p className="text-xs text-muted">{item.desc}</p>
+            </div>
+          </Link>
+        ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Main Chart Area (Mock) */}
-        <div className="card lg:col-span-2">
-          <h3 className="font-bold text-lg mb-6">Cash Flow Projection</h3>
-          <div className="h-64 flex items-end gap-2 border-b border-l border-border p-4 pt-0">
-            {/* Mock Bars */}
-            {[40, 60, 30, 80, 50, 90, 70].map((h, i) => (
-              <div key={i} className="flex-1 flex flex-col justify-end gap-1 group">
-                <div 
-                  className="w-full bg-primary bg-opacity-20 group-hover:bg-opacity-40 transition-all rounded-t-sm" 
-                  style={{ height: `${h}%` }}
-                ></div>
-                <div 
-                  className="w-full bg-primary transition-all rounded-t-sm" 
-                  style={{ height: `${h * 0.7}%` }}
-                ></div>
-              </div>
-            ))}
+      {/* Recent Transactions */}
+      {recentTransactions.length > 0 && (
+        <>
+          <div className="flex justify-between items-center mb-3">
+            <h3 className="font-bold">Recent Transactions</h3>
+            <Link href="/reports" className="text-primary text-sm font-medium">See all</Link>
           </div>
-          <div className="flex justify-between mt-2 text-xs text-muted font-bold px-4">
-            <span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span><span>Jul</span>
-          </div>
-          <div className="flex justify-center gap-6 mt-6">
-            <div className="flex items-center gap-2 text-sm font-medium">
-              <div className="w-3 h-3 rounded-full bg-primary"></div> Revenue
-            </div>
-            <div className="flex items-center gap-2 text-sm font-medium">
-              <div className="w-3 h-3 rounded-full bg-primary bg-opacity-20"></div> Projected
-            </div>
-          </div>
-        </div>
-
-        {/* Alerts & Tasks */}
-        <div className="flex flex-col gap-6">
-          <div className="card flex-1">
-            <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
-              <span className="text-warning">⚠️</span> Critical Alerts
-            </h3>
-            <div className="space-y-4">
-              <div className="p-3 bg-warning bg-opacity-10 border border-warning border-opacity-20 rounded-lg">
-                <p className="text-sm font-bold text-warning-dark mb-1">Low Inventory</p>
-                <p className="text-xs text-muted">DAP Fertilizer is below 5 bags. Reorder immediately for Plot 3.</p>
-              </div>
-              <div className="p-3 bg-danger bg-opacity-10 border border-danger border-opacity-20 rounded-lg">
-                <p className="text-sm font-bold text-danger-dark mb-1">Disease Risk</p>
-                <p className="text-xs text-muted">High humidity in Nakuru. Increased risk of Tomato Blight in Greenhouse 1.</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="card flex-1">
-            <h3 className="font-bold text-lg mb-4">Upcoming Harvests</h3>
-            <div className="space-y-3">
-              <div className="flex justify-between items-center border-b border-border pb-2">
-                <div>
-                  <p className="font-bold text-sm">Tomatoes (Anna F1)</p>
-                  <p className="text-xs text-muted">Greenhouse 1</p>
+          <div className="card p-0 overflow-hidden">
+            <div className="divide-y divide-border">
+              {recentTransactions.map((t) => (
+                <div key={t.id} className="p-4 flex justify-between items-center hover:bg-bg-surface-hover transition-colors">
+                  <div>
+                    <p className="font-bold text-sm">{t.description || t.category || t.type}</p>
+                    <p className="text-xs text-muted">{new Date(t.transaction_date).toLocaleDateString()}</p>
+                  </div>
+                  <span className={`font-bold text-sm ${t.type === "Income" ? "text-success" : "text-danger"}`}>
+                    {t.type === "Income" ? "+" : "-"}KES {Number(t.amount).toLocaleString()}
+                  </span>
                 </div>
-                <span className="text-sm font-bold text-primary">In 5 Days</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <div>
-                  <p className="font-bold text-sm">French Beans</p>
-                  <p className="text-xs text-muted">Plot 4</p>
-                </div>
-                <span className="text-sm font-bold text-muted">In 12 Days</span>
-              </div>
+              ))}
             </div>
           </div>
+        </>
+      )}
+
+      {recentTransactions.length === 0 && (
+        <div className="card flex flex-col items-center py-12 text-center gap-3">
+          <span className="text-5xl">📊</span>
+          <p className="font-bold text-gray-700">No transactions yet</p>
+          <p className="text-sm text-muted">Start logging income and expenses to see your analytics here.</p>
+          <Link href="/add?type=expense" className="btn btn-primary mt-2">Log First Transaction</Link>
         </div>
-      </div>
+      )}
     </div>
   );
 }
