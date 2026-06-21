@@ -1,4 +1,5 @@
 import Link from "next/link";
+import TaskChecklist from "@/components/TaskChecklist";
 
 export default function Home() {
   return (
@@ -20,10 +21,10 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Quick Actions Grid */}
+      {/* Quick Actions Grid - all buttons now navigate */}
       <h3 className="font-bold mb-3">Quick Actions</h3>
       <div className="grid grid-cols-3 gap-3 mb-6">
-        <button className="flex flex-col items-center justify-center gap-2 p-3 bg-white rounded-xl shadow-sm border border-border hover:border-primary hover:text-primary transition-colors">
+        <Link href="/add?type=expense" className="flex flex-col items-center justify-center gap-2 p-3 bg-white rounded-xl shadow-sm border border-border hover:border-primary hover:text-primary transition-colors">
           <div className="w-10 h-10 rounded-full bg-primary-light flex items-center justify-center text-primary">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <line x1="12" y1="5" x2="12" y2="19"></line>
@@ -31,27 +32,27 @@ export default function Home() {
             </svg>
           </div>
           <span className="text-xs font-medium">Log Expense</span>
-        </button>
-        <button className="flex flex-col items-center justify-center gap-2 p-3 bg-white rounded-xl shadow-sm border border-border hover:border-primary hover:text-primary transition-colors">
+        </Link>
+
+        <Link href="/add?type=crop" className="flex flex-col items-center justify-center gap-2 p-3 bg-white rounded-xl shadow-sm border border-border hover:border-primary hover:text-primary transition-colors">
           <div className="w-10 h-10 rounded-full bg-primary-light flex items-center justify-center text-primary">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path>
-              <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
-              <line x1="12" y1="19" x2="12" y2="22"></line>
+              <path d="M12 2v20"></path>
+              <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
             </svg>
           </div>
-          <span className="text-xs font-medium">Voice Note</span>
-        </button>
-        <button className="flex flex-col items-center justify-center gap-2 p-3 bg-white rounded-xl shadow-sm border border-border hover:border-primary hover:text-primary transition-colors">
+          <span className="text-xs font-medium">Add Crop</span>
+        </Link>
+
+        <Link href="/reports" className="flex flex-col items-center justify-center gap-2 p-3 bg-white rounded-xl shadow-sm border border-border hover:border-primary hover:text-primary transition-colors">
           <div className="w-10 h-10 rounded-full bg-primary-light flex items-center justify-center text-primary">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-              <circle cx="8.5" cy="8.5" r="1.5"></circle>
-              <polyline points="21 15 16 10 5 21"></polyline>
+              <path d="M3 3v18h18"></path>
+              <path d="m19 9-5 5-4-4-3 3"></path>
             </svg>
           </div>
-          <span className="text-xs font-medium">Scan Receipt</span>
-        </button>
+          <span className="text-xs font-medium">View Reports</span>
+        </Link>
       </div>
 
       {/* Profit/Loss Overview */}
@@ -59,7 +60,7 @@ export default function Home() {
       <div className="card mb-6 bg-gradient-to-br from-primary to-primary-hover text-white border-none relative overflow-hidden">
         {/* Decorative circle */}
         <div className="absolute -right-8 -top-8 w-32 h-32 rounded-full bg-white opacity-10"></div>
-        
+
         <div className="flex justify-between items-end mb-4">
           <div>
             <p className="text-sm opacity-90 mb-1">Current Profit</p>
@@ -73,7 +74,7 @@ export default function Home() {
             12%
           </span>
         </div>
-        
+
         <div className="flex justify-between border-t border-white border-opacity-20 pt-3">
           <div>
             <p className="text-xs opacity-80">Income</p>
@@ -86,47 +87,12 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Today's Tasks */}
+      {/* Today's Tasks — interactive client component */}
       <div className="flex justify-between items-center mb-3">
         <h3 className="font-bold">Today&apos;s Tasks</h3>
         <Link href="/crops" className="text-primary text-sm font-medium">See all</Link>
       </div>
-      <div className="flex flex-col gap-3 mb-6">
-        <div className="bg-white p-3 rounded-xl border border-border shadow-sm flex items-center gap-3">
-          <div className="w-12 h-12 rounded-lg bg-warning bg-opacity-20 flex items-center justify-center text-warning">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="m12 14 4-4"></path>
-              <path d="M3.34 19a10 10 0 1 1 17.32 0"></path>
-            </svg>
-          </div>
-          <div className="flex-1">
-            <h4 className="font-medium text-sm">Top-dress Maize</h4>
-            <p className="text-xs text-muted">Plot 2 • 2 bags CAN needed</p>
-          </div>
-          <button className="w-8 h-8 rounded-full border border-border flex items-center justify-center text-muted hover:bg-success hover:text-white hover:border-success transition-colors">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="20 6 9 17 4 12"></polyline>
-            </svg>
-          </button>
-        </div>
-        
-        <div className="bg-white p-3 rounded-xl border border-border shadow-sm flex items-center gap-3">
-          <div className="w-12 h-12 rounded-lg bg-info bg-opacity-20 flex items-center justify-center text-info">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-            </svg>
-          </div>
-          <div className="flex-1">
-            <h4 className="font-medium text-sm">Spray Tomatoes</h4>
-            <p className="text-xs text-muted">Plot 4 • Preventative</p>
-          </div>
-          <button className="w-8 h-8 rounded-full border border-border flex items-center justify-center text-muted hover:bg-success hover:text-white hover:border-success transition-colors">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="20 6 9 17 4 12"></polyline>
-            </svg>
-          </button>
-        </div>
-      </div>
+      <TaskChecklist />
 
       {/* Market Prices Snippet */}
       <div className="flex justify-between items-center mb-3">
