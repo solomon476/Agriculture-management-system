@@ -1,13 +1,15 @@
+import Link from "next/link";
+
 export default function QuickAdd() {
   return (
     <div className="container py-4 animate-fade-in pb-24">
       <div className="flex items-center gap-3 mb-6">
-        <a href="/" className="w-10 h-10 rounded-full bg-white border border-border flex items-center justify-center text-muted hover:text-primary transition-colors">
+        <Link href="/" className="w-10 h-10 rounded-full bg-white border border-border flex items-center justify-center text-muted hover:text-primary transition-colors">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <line x1="19" y1="12" x2="5" y2="12"></line>
             <polyline points="12 19 5 12 12 5"></polyline>
           </svg>
-        </a>
+        </Link>
         <h2 className="text-2xl font-bold font-heading">New Record</h2>
       </div>
 

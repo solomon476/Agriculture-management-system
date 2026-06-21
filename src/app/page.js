@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function Home() {
   return (
     <div className="container py-4 animate-fade-in">
@@ -87,7 +89,7 @@ export default function Home() {
       {/* Today's Tasks */}
       <div className="flex justify-between items-center mb-3">
         <h3 className="font-bold">Today's Tasks</h3>
-        <a href="#" className="text-primary text-sm font-medium">See all</a>
+        <Link href="/crops" className="text-primary text-sm font-medium">See all</Link>
       </div>
       <div className="flex flex-col gap-3 mb-6">
         <div className="bg-white p-3 rounded-xl border border-border shadow-sm flex items-center gap-3">
